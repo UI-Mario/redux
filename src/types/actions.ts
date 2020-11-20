@@ -14,6 +14,8 @@
  * how actions should be constructed.
  *
  * @template T the type of the action's `type` tag.
+ * 
+ * 因为总的state下可能有很多分隔开来的状态管理，每种都有自己的reducer和action，所以这里得用泛型
  */
 export interface Action<T = any> {
   type: T
@@ -24,6 +26,7 @@ export interface Action<T = any> {
  * This is mainly for the use of the `Reducer` type.
  * This is not part of `Action` itself to prevent types that extend `Action` from
  * having an index signature.
+ * TODO:question:这个类型是干啥的？
  */
 export interface AnyAction extends Action {
   // Allows any extra properties to be defined in an action.
@@ -48,6 +51,7 @@ export interface AnyAction extends Action {
  * async action instead of an action.
  *
  * @template A Returned action type.
+ * 开始看的第一个文件，内容没啥，但是泛型用得不熟，自己太菜了
  */
 export interface ActionCreator<A, P extends any[] = any[]> {
   (...args: P): A
@@ -55,6 +59,7 @@ export interface ActionCreator<A, P extends any[] = any[]> {
 
 /**
  * Object whose values are action creator functions.
+ * 这就有点没必要了吧
  */
 export interface ActionCreatorsMapObject<A = any, P extends any[] = any[]> {
   [key: string]: ActionCreator<A, P>
