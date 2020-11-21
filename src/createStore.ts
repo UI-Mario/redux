@@ -38,6 +38,7 @@ import isPlainObject from './utils/isPlainObject'
  * @returns A Redux store that lets you read the state, dispatch actions
  * and subscribe to changes.
  */
+// TODO:这么写，是否是所有函数都有function xx {}后{}的内容？
 export default function createStore<
   S,
   A extends Action,
@@ -78,6 +79,7 @@ export default function createStore<
     )
   }
 
+  // TODO:很好，究竟是这段代码起了作用，还是第一个函数声明起了作用
   if (typeof preloadedState === 'function' && typeof enhancer === 'undefined') {
     enhancer = preloadedState as StoreEnhancer<Ext, StateExt>
     preloadedState = undefined
@@ -97,11 +99,13 @@ export default function createStore<
   if (typeof reducer !== 'function') {
     throw new Error('Expected the reducer to be a function.')
   }
-
+  
   let currentReducer = reducer
   let currentState = preloadedState as S
+  // TODO:为啥有俩？
   let currentListeners: (() => void)[] | null = []
   let nextListeners = currentListeners
+  // 判断是同正在通过reducer重新计算state，是的话很多操作都不能进行
   let isDispatching = false
 
   /**
@@ -111,8 +115,12 @@ export default function createStore<
    * This prevents any bugs around consumers calling
    * subscribe/unsubscribe in the middle of a dispatch.
    */
+  // TODO:shallow copy，意思我明白，深拷贝啥的，写法不唯一，翻译一下
   function ensureCanMutateNextListeners() {
+    // 都是数组，啥时候回出现===？
+    // TODO:
     if (nextListeners === currentListeners) {
+      // 或者 [...cur]
       nextListeners = currentListeners.slice()
     }
   }
@@ -123,6 +131,7 @@ export default function createStore<
    * @returns The current state tree of your application.
    */
   function getState(): S {
+    // oh，厉害了，正在改变state的时候不能获取
     if (isDispatching) {
       throw new Error(
         'You may not call store.getState() while the reducer is executing. ' +
@@ -155,7 +164,7 @@ export default function createStore<
    * state by the time it exits.
    *
    * @param listener A callback to be invoked on every dispatch.
-   * @returns A function to remove this change listener.
+   * @returns A function to remove this change listener.就是返回取消订阅的函数
    */
   function subscribe(listener: () => void) {
     if (typeof listener !== 'function') {
@@ -171,6 +180,7 @@ export default function createStore<
       )
     }
 
+    // 运行时，当然给true
     let isSubscribed = true
 
     ensureCanMutateNextListeners()
@@ -190,9 +200,12 @@ export default function createStore<
 
       isSubscribed = false
 
+      // TODO:稍等我有点没看懂，把所有listener全干掉了？为啥？
+
       ensureCanMutateNextListeners()
       const index = nextListeners.indexOf(listener)
       nextListeners.splice(index, 1)
+      // 虽然这儿给了null，但是dispatch里又重新赋值，猜猜赋的啥
       currentListeners = null
     }
   }
@@ -223,6 +236,7 @@ export default function createStore<
    * return something else (for example, a Promise you can await).
    */
   function dispatch(action: A) {
+    // 判断
     if (!isPlainObject(action)) {
       throw new Error(
         'Actions must be plain objects. ' +
@@ -241,6 +255,9 @@ export default function createStore<
       throw new Error('Reducers may not dispatch actions.')
     }
 
+    // 真正干了就两件事
+    // 1.利用reducer何传进来的action，更新了state
+    // 2.挨个通知 listener，由于这儿我们有俩listener，还是很奇怪为啥有俩
     try {
       isDispatching = true
       currentState = currentReducer(currentState, action)
@@ -248,12 +265,15 @@ export default function createStore<
       isDispatching = false
     }
 
+    // TODO:为什么要套这么多=，他们间有什么区别（subscribe里找）
+    // 这不操作感觉做了挺多的
     const listeners = (currentListeners = nextListeners)
     for (let i = 0; i < listeners.length; i++) {
       const listener = listeners[i]
       listener()
     }
 
+    // 为什么还要返回值
     return action
   }
 
@@ -273,7 +293,7 @@ export default function createStore<
     if (typeof nextReducer !== 'function') {
       throw new Error('Expected the nextReducer to be a function.')
     }
-
+    // TODO:又来一个看不懂的写法
     // TODO: do this more elegantly
     ;((currentReducer as unknown) as Reducer<
       NewState,
@@ -301,6 +321,7 @@ export default function createStore<
    * For more information, see the observable proposal:
    * https://github.com/tc39/proposal-observable
    */
+  // 在redux的介绍里没咋提过，所以的自己看了
   function observable() {
     const outerSubscribe = subscribe
     return {

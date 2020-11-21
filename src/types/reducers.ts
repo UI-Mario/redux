@@ -37,6 +37,7 @@ export type Reducer<S = any, A extends Action = AnyAction> = (
  * @template A The type of actions the reducers can potentially respond to.
  */
 export type ReducersMapObject<S = any, A extends Action = AnyAction> = {
+  // TODO:这种写法，要学
   [K in keyof S]: Reducer<S[K], A>
 }
 

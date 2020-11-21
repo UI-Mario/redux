@@ -12,6 +12,7 @@ import '../utils/symbol-observable'
  * Reference for future devs:
  * https://github.com/microsoft/TypeScript/issues/31751#issuecomment-498526919
  */
+// TODO:是否是never的应用场景？为什么要用[]包裹
 export type ExtendState<State, Extension> = [Extension] extends [never]
   ? State
   : State & Extension
@@ -19,6 +20,7 @@ export type ExtendState<State, Extension> = [Extension] extends [never]
 /**
  * Internal "virtual" symbol used to make the `CombinedState` type unique.
  */
+// TODO:unique前缀是什么
 declare const $CombinedState: unique symbol
 
 /**
@@ -259,6 +261,8 @@ export interface StoreCreator {
  * @template Ext Store extension that is mixed into the Store type.
  * @template StateExt State extension that is mixed into the state type.
  */
+
+//  较为常见的enhancer是thunk或redux-saga
 export type StoreEnhancer<Ext = {}, StateExt = never> = (
   next: StoreEnhancerStoreCreator<Ext, StateExt>
 ) => StoreEnhancerStoreCreator<Ext, StateExt>
