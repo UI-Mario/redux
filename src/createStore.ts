@@ -258,6 +258,7 @@ export default function createStore<
     // 真正干了就两件事
     // 1.利用reducer何传进来的action，更新了state
     // 2.挨个通知 listener，由于这儿我们有俩listener，还是很奇怪为啥有俩
+    // TODO:为啥要用try包裹
     try {
       isDispatching = true
       currentState = currentReducer(currentState, action)
