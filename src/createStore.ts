@@ -180,7 +180,8 @@ export default function createStore<
       )
     }
 
-    // 运行时，当然给true
+    // 运行时，当然给true，
+    // 话说，这个变量，感觉没啥用
     let isSubscribed = true
 
     ensureCanMutateNextListeners()

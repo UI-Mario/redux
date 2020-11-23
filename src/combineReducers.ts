@@ -169,6 +169,7 @@ export default function combineReducers(reducers: ReducersMapObject) {
     shapeAssertionError = e
   }
 
+  // 返回组合后的reducer
   return function combination(
     state: StateFromReducersMapObject<typeof reducers> = {},
     action: AnyAction

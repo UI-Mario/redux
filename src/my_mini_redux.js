@@ -36,18 +36,6 @@ const createStore = (reducer, initState) => {
     };
   };
 
-  //   function changeState(newState) {
-  //     isDispatching = true;
-  //     currentstate = reducer(newState, action);
-  //     isDispatching = false;
-
-  //     /*通知*/
-  //     for (let i = 0; i < listeners.length; i++) {
-  //       const listener = listeners[i];
-  //       listener();
-  //     }
-  //   }
-
   const dispatch = (action) => {
     // type check
     // if (isPlainObject(action)) {
@@ -57,8 +45,7 @@ const createStore = (reducer, initState) => {
     if (isDispatching) {
     }
 
-    // 更新reducer
-    // 更新state
+    // reducer更新state
     // 通知listeners
     try {
       isDispatching = true;
@@ -127,6 +114,7 @@ const infoReducer = (state, action) => {
 };
 
 const combineReducers = (reducers) => {
+  // !!!!前提是，reducers的key和state的key能对应起来，键名一致
   const reducerKeys = Object.keys(reducers);
   return (state = {}, action) => {
     // 全新总的state
@@ -134,14 +122,25 @@ const combineReducers = (reducers) => {
     const nextState = {};
     for (var i = 0; i < reducerKeys.length; i++) {
       const key = reducerKeys[i];
-      const prevState = state[key];
-      const reducer = reducers[key];
 
-      const nextStateForKey = reducer(prevState, action);
+      const nextStateForKey = reducer(state[key], reducers[key]);
       nextState[key] = nextStateForKey;
     }
     return nextState;
   };
+
+  // 贴上阮一峰大佬的实现：
+  // const combineReducers = reducers => {
+  //   return (state = {}, action) => {
+  //     return Object.keys(reducers).reduce(
+  //       (nextState, key) => {
+  //         nextState[key] = reducers[key](state[key], action);
+  //         return nextState;
+  //       },
+  //       {} 
+  //     );
+  //   };
+  // };
 };
 
 // =========================use================================
@@ -175,13 +174,3 @@ store.dispatch({
 store.dispatch({
   type: "DECRESEMENT",
 });
-/*我想随便改 计划外的修改是无效的！*/
-// store.changeState({
-//   count: "abc",
-// });
-// store.changeState({
-//   ...store.getState(),
-//   counter: {
-//     count: 1,
-//   },
-// });
