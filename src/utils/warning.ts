@@ -3,6 +3,8 @@
  *
  * @param message The warning message.
  */
+// TODO:有点好奇，console啥时候会没有
+// https://developer.mozilla.org/en-US/docs/Web/API/console
 export default function warning(message: string): void {
   /* eslint-disable no-console */
   if (typeof console !== 'undefined' && typeof console.error === 'function') {

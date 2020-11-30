@@ -16,6 +16,9 @@ function getUndefinedStateErrorMessage(key: string, action: Action) {
   const actionDescription =
     (actionType && `action "${String(actionType)}"`) || 'an action'
 
+    // conbine reducer的时候，为了让state和reducer一一对应，
+    // state和reducer的key是一样的
+
   return (
     `Given ${actionDescription}, reducer "${key}" returned undefined. ` +
     `To ignore an action, you must explicitly return the previous state. ` +
@@ -23,6 +26,7 @@ function getUndefinedStateErrorMessage(key: string, action: Action) {
   )
 }
 
+// 猜猜都有哪些情况
 function getUnexpectedStateShapeWarningMessage(
   inputState: object,
   reducers: ReducersMapObject,
@@ -45,6 +49,7 @@ function getUnexpectedStateShapeWarningMessage(
   if (!isPlainObject(inputState)) {
     const match = Object.prototype.toString
       .call(inputState)
+      // TODO:不会正则，:snob:
       .match(/\s([a-z|A-Z]+)/)
     const matchType = match ? match[1] : ''
     return (
@@ -75,6 +80,7 @@ function getUnexpectedStateShapeWarningMessage(
   }
 }
 
+// 刚检查完state，来检查reducer了
 function assertReducerShape(reducers: ReducersMapObject) {
   Object.keys(reducers).forEach(key => {
     const reducer = reducers[key]
@@ -125,6 +131,8 @@ function assertReducerShape(reducers: ReducersMapObject) {
  * @returns A reducer function that invokes every reducer inside the passed
  *   object, and builds a state object with the same shape.
  */
+
+ // TODO:md，看了两周源码结果还不会用泛型、花里胡哨代码
 export default function combineReducers<S>(
   reducers: ReducersMapObject<S, any>
 ): Reducer<CombinedState<S>>
