@@ -98,6 +98,7 @@ function assertReducerShape(reducers: ReducersMapObject) {
 
     if (
       typeof reducer(undefined, {
+        // 大概是为了检查每个reducer的default是不是返回当前state
         type: ActionTypes.PROBE_UNKNOWN_ACTION()
       }) === 'undefined'
     ) {
@@ -148,6 +149,7 @@ export default function combineReducers<M extends ReducersMapObject>(
 export default function combineReducers(reducers: ReducersMapObject) {
   const reducerKeys = Object.keys(reducers)
   const finalReducers: ReducersMapObject = {}
+
   for (let i = 0; i < reducerKeys.length; i++) {
     const key = reducerKeys[i]
 

@@ -384,6 +384,7 @@ export default function createStore<
     subscribe,
     getState,
     replaceReducer,
+    // TODO:?????使用redux的时候没见过这玩意儿呀，只有一个Symbol
     [$$observable]: observable
   } as unknown) as Store<ExtendState<S, StateExt>, A, StateExt, Ext> & Ext
   return store
