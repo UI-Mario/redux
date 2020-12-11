@@ -38,7 +38,7 @@ import isPlainObject from './utils/isPlainObject'
  * @returns A Redux store that lets you read the state, dispatch actions
  * and subscribe to changes.
  */
-// TODO:这么写，是否是所有函数都有function xx {}后{}的内容？
+// 重载
 export default function createStore<
   S,
   A extends Action,
@@ -69,6 +69,7 @@ export default function createStore<
   enhancer?: StoreEnhancer<Ext, StateExt>
 ): Store<ExtendState<S, StateExt>, A, StateExt, Ext> & Ext {
   if (
+    // 手动类型检查可还行
     (typeof preloadedState === 'function' && typeof enhancer === 'function') ||
     (typeof enhancer === 'function' && typeof arguments[3] === 'function')
   ) {

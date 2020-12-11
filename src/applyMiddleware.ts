@@ -56,13 +56,13 @@ import { Reducer } from './types/reducers'
 // ts支持函数重载，虽然用起来很别扭
 // TypeScript 重载的过程是，拿传入的参数和重载的方法签名列表中由上往下逐个匹配，
 // 匹配什么东西呢，参数的类型和个数
-// 直到找到一个完全匹配的函数签名，否则报错。
-// 所以推荐的做法是将签名更加具体的重载放上面，不那么具体的放后面。
+// 直到找到一个完全匹配的函数签名，否则报错
+// 所以推荐的做法是将签名更加具体的重载放上面，不那么具体的放后面
 // 最后一个签名要包含前面所有签名的情况，并且它不在重载列表内
 // 为什么要这么设计？我反正是不想深究了，还涉及ts的设计原则啥的
 // 使用体验就是，如果是根据参数不同有不同返回类型，可以试试；但如果只有参数变，输出结果类型不变，那还是别了
 // 🌰:
-// 
+// 一般的都能跑，可惜typeof很弱鸡，而且redux里面泛型多到爆炸，所以上例就我的出发点而言，基本没啥用
 export default function applyMiddleware(): StoreEnhancer
 export default function applyMiddleware<Ext1, S>(
   middleware1: Middleware<Ext1, S, any>
@@ -90,6 +90,7 @@ export default function applyMiddleware<Ext1, Ext2, Ext3, Ext4, Ext5, S>(
   middleware5: Middleware<Ext5, S, any>
 ): StoreEnhancer<{ dispatch: Ext1 & Ext2 & Ext3 & Ext4 & Ext5 }>
 // 建议middleware这块先看看阮一峰老师的讲解，会容易很多
+// TODO:为什么要在上边写这么一大堆函数？
 export default function applyMiddleware<Ext, S = any>(
   ...middlewares: Middleware<any, S, any>[]
 ): StoreEnhancer<{ dispatch: Ext }>
@@ -113,6 +114,7 @@ export default function applyMiddleware(
       dispatch: (action, ...args) => dispatch(action, ...args)
     }
     const chain = middlewares.map(middleware => middleware(middlewareAPI))
+    // 传给compose，让其产生一个链式调用的函数
     dispatch = compose<typeof dispatch>(...chain)(store.dispatch)
 
     return {

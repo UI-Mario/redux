@@ -15,7 +15,7 @@ const createStore = (reducer, initState) => {
       throw new Error('dispatching')
     }
 
-    // oh，这玩意是不是就是传说中的闭包
+    // oh，这玩意是不是就是传说中的闭包，但是这个isSubscribed，没啥用呀
     let isSubscribed = true
 
     if (listener) listeners.push(listener)
@@ -35,18 +35,6 @@ const createStore = (reducer, initState) => {
       listeners.splice(index, 1)
     }
   }
-
-  //   function changeState(newState) {
-  //     isDispatching = true;
-  //     currentstate = reducer(newState, action);
-  //     isDispatching = false;
-
-  //     /*通知*/
-  //     for (let i = 0; i < listeners.length; i++) {
-  //       const listener = listeners[i];
-  //       listener();
-  //     }
-  //   }
 
   const dispatch = action => {
     // type check
@@ -139,6 +127,7 @@ const combineReducers = reducers => {
   return (state = {}, action) => {
     // 全新总的state
     // 不过这样的话，每次dispatch都重新算所有state，感觉也low了
+    // 收回，redux的思想好像就是immutable
     const nextState = {}
     for (var i = 0; i < reducerKeys.length; i++) {
       const key = reducerKeys[i]

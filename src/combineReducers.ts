@@ -84,6 +84,7 @@ function getUnexpectedStateShapeWarningMessage(
 function assertReducerShape(reducers: ReducersMapObject) {
   Object.keys(reducers).forEach(key => {
     const reducer = reducers[key]
+    // reducer接受当前state和一个action，返回待替换的state
     const initialState = reducer(undefined, { type: ActionTypes.INIT })
 
     if (typeof initialState === 'undefined') {
@@ -179,7 +180,7 @@ export default function combineReducers(reducers: ReducersMapObject) {
     shapeAssertionError = e
   }
 
-  // 返回组合后的reducer
+  // 返回组合后的reducer，这才是重头
   return function combination(
     state: StateFromReducersMapObject<typeof reducers> = {},
     action: AnyAction
