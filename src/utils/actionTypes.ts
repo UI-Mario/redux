@@ -28,7 +28,7 @@ const randomString = () =>
 const ActionTypes = {
   INIT: `@@redux/INIT${/* #__PURE__ */ randomString()}`,
   REPLACE: `@@redux/REPLACE${/* #__PURE__ */ randomString()}`,
-  // TODO:这又是哪块小饼干
+  // TODO:这又是哪块小饼干，来一个随便的actionType，估计是测试reducer
   PROBE_UNKNOWN_ACTION: () => `@@redux/PROBE_UNKNOWN_ACTION${randomString()}`
 }
 

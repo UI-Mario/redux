@@ -28,6 +28,7 @@ import { Reducer } from './types/reducers'
  * @template Ext Dispatch signature added by a middleware.
  * @template S The type of the state supported by a middleware.
  */
+// FIXME:第一眼就被震住了，不会触发multi——name么ლ(′◉❥◉｀ლ)
 export default function applyMiddleware(): StoreEnhancer
 export default function applyMiddleware<Ext1, S>(
   middleware1: Middleware<Ext1, S, any>
@@ -54,6 +55,8 @@ export default function applyMiddleware<Ext1, Ext2, Ext3, Ext4, Ext5, S>(
   middleware4: Middleware<Ext4, S, any>,
   middleware5: Middleware<Ext5, S, any>
 ): StoreEnhancer<{ dispatch: Ext1 & Ext2 & Ext3 & Ext4 & Ext5 }>
+// TODO:打住，到这为止，这些参数在接下来可是一个都没用啊，而且为啥要一个一个列出来?
+// 建议middleware这块先看看阮一峰老师的讲解，会容易很多
 export default function applyMiddleware<Ext, S = any>(
   ...middlewares: Middleware<any, S, any>[]
 ): StoreEnhancer<{ dispatch: Ext }>

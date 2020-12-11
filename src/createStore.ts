@@ -80,6 +80,11 @@ export default function createStore<
   }
 
   // TODO:很好，究竟是这段代码起了作用，还是第一个函数声明起了作用
+  // createStore可以接受三个参数reducer、state、enhancer，其中后俩可选
+  // 问题来了，当只有俩参数时，到底是state还是enhancer？
+  // 是state的话，正常运行，没毛病
+  // 是enhancer，不好意思类型不对
+  // 这里就干这事
   if (typeof preloadedState === 'function' && typeof enhancer === 'undefined') {
     enhancer = preloadedState as StoreEnhancer<Ext, StateExt>
     preloadedState = undefined
