@@ -1,46 +1,58 @@
 // 利用reducer计算state
 const createStore = (reducer, initState) => {
-  let currentstate = initState;
-  let listeners = [];
-  let currentReducer = reducer;
-  let isDispatching = false;
+  let currentstate = initState
+  let listeners = []
+  let currentReducer = reducer
+  let isDispatching = false
 
-  const subscribe = (listener) => {
+  const subscribe = listener => {
     // type check
-    if (typeof listener !== "function") {
-      throw new Error("Expected the listener to be a function.");
+    if (typeof listener !== 'function') {
+      throw new Error('Expected the listener to be a function.')
     }
 
     if (isDispatching) {
-      throw new Error("dispatching");
+      throw new Error('dispatching')
     }
 
     // oh，这玩意是不是就是传说中的闭包
-    let isSubscribed = true;
+    let isSubscribed = true
 
-    if (listener) listeners.push(listener);
+    if (listener) listeners.push(listener)
 
     return () => {
       if (!isSubscribed) {
-        return;
+        return
       }
 
       if (isDispatching) {
-        throw new Error("");
+        throw new Error('')
       }
 
-      isSubscribed = false;
+      isSubscribed = false
 
-      const index = listeners.indexOf(listener);
-      listeners.splice(index, 1);
-    };
-  };
+      const index = listeners.indexOf(listener)
+      listeners.splice(index, 1)
+    }
+  }
 
-  const dispatch = (action) => {
+  //   function changeState(newState) {
+  //     isDispatching = true;
+  //     currentstate = reducer(newState, action);
+  //     isDispatching = false;
+
+  //     /*通知*/
+  //     for (let i = 0; i < listeners.length; i++) {
+  //       const listener = listeners[i];
+  //       listener();
+  //     }
+  //   }
+
+  const dispatch = action => {
     // type check
     // if (isPlainObject(action)) {
     // }
-    if (typeof action.type === "undefined") {
+    if (typeof action.type === 'undefined') {
     }
     if (isDispatching) {
     }
@@ -48,129 +60,126 @@ const createStore = (reducer, initState) => {
     // reducer更新state
     // 通知listeners
     try {
-      isDispatching = true;
-      currentstate = currentReducer(currentstate, action);
+      isDispatching = true
+      currentstate = currentReducer(currentstate, action)
     } finally {
-      isDispatching = false;
+      isDispatching = false
     }
 
     for (var listener of listeners) {
-      listener();
+      listener()
     }
-  };
+  }
 
-  const observe = () => {};
+  const observe = () => {}
 
   const getState = () => {
     // progress check
     if (isDispatching) {
-      throw new Error("dispatching");
+      throw new Error('dispatching')
     }
-    return currentstate;
-  };
+    return currentstate
+  }
+
+  /* 注意！！！只修改了这里，用一个不匹配任何计划的 type，来获取初始值 */
+  dispatch({ type: Symbol() })
 
   const store = {
     subscribe,
     dispatch,
-    getState,
+    getState
     // replaceReducer,
-  };
-  return store;
-};
+  }
+  return store
+}
 
-const counterReducer = (state, action) => {
+const counterReducer = (state = { count: 0 }, action) => {
   switch (action.type) {
-    case "INCRESEMENT":
+    case 'INCRESEMENT':
       return {
         // 同名属性自动覆盖
         ...state,
-        count: state.count + 1,
-      };
-    case "DECRESEMENT":
+        count: state.count + 1
+      }
+    case 'DECRESEMENT':
       return {
         ...state,
-        count: state.count - 1,
-      };
+        count: state.count - 1
+      }
     default:
-      return state;
+      return state
   }
-};
+}
 
-const infoReducer = (state, action) => {
+const infoReducer = (
+  state = {
+    name: 'Bob',
+    age: 18
+  },
+  action
+) => {
   switch (action.type) {
-    case "CHANGE_NAME":
+    case 'CHANGE_NAME':
       return {
         ...state,
-        name: action.payload,
-      };
-    case "CHNAGE_AGE":
+        name: action.payload
+      }
+    case 'CHNAGE_AGE':
       return {
         ...state,
-        age: action.payload,
-      };
+        age: action.payload
+      }
     default:
-      return state;
+      return state
   }
-};
+}
 
-const combineReducers = (reducers) => {
-  // !!!!前提是，reducers的key和state的key能对应起来，键名一致
-  const reducerKeys = Object.keys(reducers);
+const combineReducers = reducers => {
+  const reducerKeys = Object.keys(reducers)
   return (state = {}, action) => {
     // 全新总的state
     // 不过这样的话，每次dispatch都重新算所有state，感觉也low了
-    const nextState = {};
+    const nextState = {}
     for (var i = 0; i < reducerKeys.length; i++) {
-      const key = reducerKeys[i];
+      const key = reducerKeys[i]
+      const prevState = state[key]
+      const reducer = reducers[key]
 
-      const nextStateForKey = reducer(state[key], reducers[key]);
-      nextState[key] = nextStateForKey;
+      const nextStateForKey = reducer(prevState, action)
+      nextState[key] = nextStateForKey
     }
-    return nextState;
-  };
-
-  // 贴上阮一峰大佬的实现：
-  // const combineReducers = reducers => {
-  //   return (state = {}, action) => {
-  //     return Object.keys(reducers).reduce(
-  //       (nextState, key) => {
-  //         nextState[key] = reducers[key](state[key], action);
-  //         return nextState;
-  //       },
-  //       {} 
-  //     );
-  //   };
-  // };
-};
+    return nextState
+  }
+}
 
 // =========================use================================
-let initState = {
-  count: {
-    count: 0,
-  },
-  info: {
-    name: "Bob",
-    age: 18,
-  },
-};
-
 const reducer = combineReducers({
   count: counterReducer,
-  info: infoReducer,
-});
+  info: infoReducer
+})
 
-let store = createStore(reducer, initState);
+let store = createStore(reducer)
 
 const unsubscribe = store.subscribe(() => {
-  let state = store.getState();
-  console.log(state);
-});
-/*自增*/
-store.dispatch({
-  type: "CHANGE_NAME",
-  payload: "Smith",
-});
+  let state = store.getState()
+  console.log(state)
+})
 /*自减*/
 store.dispatch({
-  type: "DECRESEMENT",
-});
+  type: 'DECRESEMENT'
+})
+/*自增*/
+store.dispatch({
+  type: 'CHANGE_NAME',
+  payload: 'Smith'
+})
+/*我想随便改 计划外的修改是无效的！*/
+// store.changeState({
+//   count: "abc",
+// });
+// store.changeState({
+//   ...store.getState(),
+//   counter: {
+//     count: 1,
+//   },
+// });

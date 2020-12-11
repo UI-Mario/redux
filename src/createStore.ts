@@ -104,7 +104,7 @@ export default function createStore<
   if (typeof reducer !== 'function') {
     throw new Error('Expected the reducer to be a function.')
   }
-  
+
   let currentReducer = reducer
   let currentState = preloadedState as S
   // TODO:为啥有俩？已经有有isSubscribed和isDispatching保证顺序
@@ -122,7 +122,7 @@ export default function createStore<
    */
   // TODO:shallow copy，意思我明白，深拷贝啥的，写法不唯一，翻译一下
   function ensureCanMutateNextListeners() {
-    // 都是数组，啥时候回出现===？
+    // 出现相同引用，就拷贝一下
     // TODO:
     if (nextListeners === currentListeners) {
       // 或者 [...cur]
@@ -208,6 +208,18 @@ export default function createStore<
       isSubscribed = false
 
       // TODO:稍等我有点没看懂，把所有listener全干掉了？为啥？
+      // answer:
+      // After judging the condition, 
+      // the subscriber is deleted from nextlisteners. 
+      // Seeing that there may be some friends who have such a question about current listeners and nextlisteners? 
+      // In the function dispatch, the two are combined into a reference. 
+      // Why are they separated here? Can’t I use currentlisteners directly? 
+      // In fact, this is also for the sake of data consistency, 
+      // because there is such a situation. 
+      // When Redux notifies all subscribers, 
+      // a new subscriber is added. If only current listeners are used, 
+      // when new subscribers plug in, the original order will be disordered, 
+      // thus causing some serious problems.
       ensureCanMutateNextListeners()
       const index = nextListeners.indexOf(listener)
       nextListeners.splice(index, 1)
@@ -265,7 +277,7 @@ export default function createStore<
     // 真正干了就两件事
     // 1.利用reducer何传进来的action，更新了state
     // 2.挨个通知 listener，由于这儿我们有俩listener，还是很奇怪为啥有俩
-    // TODO:为啥要用try包裹
+    // TODO:为啥要用try包裹?中间件的缘故？
     try {
       isDispatching = true
       currentState = currentReducer(currentState, action)
