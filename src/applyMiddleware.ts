@@ -29,6 +29,40 @@ import { Reducer } from './types/reducers'
  * @template S The type of the state supported by a middleware.
  */
 // FIXME:第一眼就被震住了，不会触发multi——name么ლ(′◉❥◉｀ლ)
+// 不好意思是我太辣鸡，ts里有函数重载
+// first, what is overload
+// 传统重载是同名函数有不同的实现和接口
+// second, why need overload
+// 为了使类型和个数明朗，避免函数内部和外部的冗余操作，敲代码能有提示
+// 但可惜js没有overload这一说
+// 具体原因有：
+// 1.动态语言，函数参数都放在类数组对象里，不定义参数类型，也不检查参数的类型和个数
+// 2.js里函数也是一个对象，所谓的函数签名就是一个指针，不停地换指针只会指向最后一个
+// 🌰:
+// var a = () => {
+//   console.log(1);
+// };
+// var a = () => {
+//   console.log(2);
+// };
+// var a = (c) => {
+//   console.log(3);
+// };
+// var a = () => {
+//   console.log(4);
+// };
+// a('m'); // 4
+// --------------------TS----------------------
+// ts支持函数重载，虽然用起来很别扭
+// TypeScript 重载的过程是，拿传入的参数和重载的方法签名列表中由上往下逐个匹配，
+// 匹配什么东西呢，参数的类型和个数
+// 直到找到一个完全匹配的函数签名，否则报错。
+// 所以推荐的做法是将签名更加具体的重载放上面，不那么具体的放后面。
+// 最后一个签名要包含前面所有签名的情况，并且它不在重载列表内
+// 为什么要这么设计？我反正是不想深究了，还涉及ts的设计原则啥的
+// 使用体验就是，如果是根据参数不同有不同返回类型，可以试试；但如果只有参数变，输出结果类型不变，那还是别了
+// 🌰:
+// 
 export default function applyMiddleware(): StoreEnhancer
 export default function applyMiddleware<Ext1, S>(
   middleware1: Middleware<Ext1, S, any>
@@ -55,7 +89,6 @@ export default function applyMiddleware<Ext1, Ext2, Ext3, Ext4, Ext5, S>(
   middleware4: Middleware<Ext4, S, any>,
   middleware5: Middleware<Ext5, S, any>
 ): StoreEnhancer<{ dispatch: Ext1 & Ext2 & Ext3 & Ext4 & Ext5 }>
-// TODO:打住，到这为止，这些参数在接下来可是一个都没用啊，而且为啥要一个一个列出来?
 // 建议middleware这块先看看阮一峰老师的讲解，会容易很多
 export default function applyMiddleware<Ext, S = any>(
   ...middlewares: Middleware<any, S, any>[]

@@ -1,5 +1,7 @@
 type Func<T extends any[], R> = (...a: T) => R
 
+// ts允许函数重载
+
 /**
  * Composes single-argument functions from right to left. The rightmost
  * function can take multiple arguments as it provides the signature for the
@@ -53,5 +55,6 @@ export default function compose(...funcs: Function[]) {
     return funcs[0]
   }
 
+  // 返回一个函数，相当于所有函数的顺序回调，具体可以自己试着敲一下
   return funcs.reduce((a, b) => (...args: any) => a(b(...args)))
 }
