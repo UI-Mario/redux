@@ -29,6 +29,8 @@ export default function isPlainObject(obj: any): boolean {
     proto = Object.getPrototypeOf(proto)
   }
   // 这段代码就保证了，原型链的长度 === 1，就是纯函数啦
-
+  // 而且建议看一下下面两篇文章，有关于此方法的困惑
+  // https://www.zhihu.com/question/287632207/answer/458261384
+  // https://www.zhihu.com/question/299783862
   return Object.getPrototypeOf(obj) === proto
 }

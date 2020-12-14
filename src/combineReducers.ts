@@ -46,6 +46,7 @@ function getUnexpectedStateShapeWarningMessage(
     )
   }
 
+  // TODO:为什么必须是plainObject
   if (!isPlainObject(inputState)) {
     const match = Object.prototype.toString
       .call(inputState)
@@ -148,6 +149,9 @@ export default function combineReducers<M extends ReducersMapObject>(
   ActionFromReducersMapObject<M>
 >
 export default function combineReducers(reducers: ReducersMapObject) {
+  // 对于Object.create，和构造函数模式，都可以通过下列方法获取key
+  // 但只能返回自身可枚举属性，即enumerable: true
+  // for..in..则可以返回自身可枚举属性和原型上的属性
   const reducerKeys = Object.keys(reducers)
   const finalReducers: ReducersMapObject = {}
 
@@ -164,6 +168,7 @@ export default function combineReducers(reducers: ReducersMapObject) {
       finalReducers[key] = reducers[key]
     }
   }
+  // 试了一下
   const finalReducerKeys = Object.keys(finalReducers)
 
   // This is used to make sure we don't warn about the same
