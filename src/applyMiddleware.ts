@@ -103,6 +103,7 @@ export default function applyMiddleware(
   ) => {
     const store = createStore(reducer, preloadedState)
     // TODO:Why
+    // 为什么要传一个这种dispatch
     let dispatch: Dispatch = () => {
       throw new Error(
         'Dispatching while constructing your middleware is not allowed. ' +

@@ -34,3 +34,14 @@ export default function isPlainObject(obj: any): boolean {
   // https://www.zhihu.com/question/299783862
   return Object.getPrototypeOf(obj) === proto
 }
+
+// TODO:这个函数体里的东西换过去也能跑过所有测试
+const myIsPlainObject = (obj: any) => {
+  let proto = Object.getPrototypeOf(obj)
+  return Object.getPrototypeOf(proto) === null
+}
+
+// 但是这个过不了，为啥
+const failIsPlainObject = (obj: any) => {
+  return Object.getPrototypeOf(obj) === Object.prototype;
+}
