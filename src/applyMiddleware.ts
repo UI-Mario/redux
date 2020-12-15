@@ -102,6 +102,7 @@ export default function applyMiddleware(
     preloadedState?: PreloadedState<S>
   ) => {
     const store = createStore(reducer, preloadedState)
+    // TODO:Why
     let dispatch: Dispatch = () => {
       throw new Error(
         'Dispatching while constructing your middleware is not allowed. ' +
