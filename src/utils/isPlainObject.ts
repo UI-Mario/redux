@@ -42,6 +42,10 @@ const myIsPlainObject = (obj: any) => {
 }
 
 // 但是这个过不了，为啥
+// 基本上和Array.isArray要解决的问题一样
+// context
 const failIsPlainObject = (obj: any) => {
   return Object.getPrototypeOf(obj) === Object.prototype;
 }
+
+// TODO:context [[prototype]] ??
