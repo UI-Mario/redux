@@ -25,27 +25,34 @@ export default function isPlainObject(obj: any): boolean {
   // const apple = new Fruit()
   // Fruit.prototype ===> Fruit.prototype
   // Fruit.prototype.constuctor ===> Fruit
+
   while (Object.getPrototypeOf(proto) !== null) {
     proto = Object.getPrototypeOf(proto)
   }
-  // 这段代码就保证了，原型链的长度 === 1，就是纯函数啦
-  // 而且建议看一下下面两篇文章，有关于此方法的困惑
-  // https://www.zhihu.com/question/287632207/answer/458261384
-  // https://www.zhihu.com/question/299783862
+  // // 这段代码就保证了，原型链的长度 === 1，就是纯函数啦
+  // // 而且建议看一下下面两篇文章，有关于此方法的困惑
+  // // https://www.zhihu.com/question/287632207/answer/458261384
+  // // https://www.zhihu.com/question/299783862
   return Object.getPrototypeOf(obj) === proto
 }
 
-// TODO:这个函数体里的东西换过去也能跑过所有测试
-const myIsPlainObject = (obj: any) => {
-  let proto = Object.getPrototypeOf(obj)
-  return Object.getPrototypeOf(proto) === null
-}
+// TODO:这个函数体里的东西换过去也能跑过所有测试，但是看见sf上有人讨论
+// 之所以不这么写，是因为while是真实地回溯到了顶点，下面这个方法有可能找到的是subclass
+// const myIsPlainObject = (obj: any) => {
+//   let proto = Object.getPrototypeOf(obj)
+//   return Object.getPrototypeOf(proto) === null
+// }
 
 // 但是这个过不了，为啥
 // 基本上和Array.isArray要解决的问题一样
 // context
-const failIsPlainObject = (obj: any) => {
-  return Object.getPrototypeOf(obj) === Object.prototype;
-}
+// const failIsPlainObject_1 = (obj: any) => {
+//   return Object.getPrototypeOf(obj) === Object.prototype;
+// }
+
+// const failIsPlainObject_2 = (obj: any) => {
+//   // 这个我懂了，是因为Object.create和new Fruite都会报true
+//   return Object.prototype.toString.call(obj) === '[object Object]';
+// }
 
 // TODO:context [[prototype]] ??

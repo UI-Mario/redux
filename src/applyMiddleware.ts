@@ -91,8 +91,9 @@ export default function applyMiddleware<Ext1, Ext2, Ext3, Ext4, Ext5, S>(
 ): StoreEnhancer<{ dispatch: Ext1 & Ext2 & Ext3 & Ext4 & Ext5 }>
 // 建议middleware这块先看看阮一峰老师的讲解，会容易很多
 // TODO:为什么要在上边写这么一大堆函数？
+// 还是js淳朴
 export default function applyMiddleware<Ext, S = any>(
-  ...middlewares: Middleware<any, S, any>[]
+  ...middlewares: Middleware<Ext, S, any>[]
 ): StoreEnhancer<{ dispatch: Ext }>
 export default function applyMiddleware(
   ...middlewares: Middleware[]
