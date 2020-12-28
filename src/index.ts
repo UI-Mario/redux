@@ -43,6 +43,9 @@ export { Action, AnyAction } from './types/actions'
  * If the function has been minified and NODE_ENV !== 'production', warn the user.
  */
 // TODO:????
+// 检查代码是否被压缩过
+// 为啥要这么写，还不知道，看了warning也不知道
+// 哦，大概懂了，大概就是担心用户在dev环境跑之前build出来的代码，？？？算了，还是不懂
 function isCrushed() {}
 
 if (

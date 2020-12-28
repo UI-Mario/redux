@@ -73,6 +73,7 @@ const myCompose = (...fns: any[]): ((...args: any) => number) => {
   // 神奇
 
   // 把reduce的手写提上日程
+  // 写完了
 
   return fns.reduce((acFn, curFn) => (...args: any) => {
     console.log(args)

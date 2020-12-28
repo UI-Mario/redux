@@ -163,6 +163,8 @@ store.dispatch({
   payload: 'Smith'
 })
 /*我想随便改 计划外的修改是无效的！*/
+// 但是有意思的是，getState()直接返回引用而不是拷贝，所以对getState修改时可以生效的（亲测）
+// 想想也是，如果是拷贝怎么通知所有用到的地方呢，是我傻了
 // store.changeState({
 //   count: "abc",
 // });
